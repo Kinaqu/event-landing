@@ -25,6 +25,11 @@ export const metadata: Metadata = {
   title: "Motion Week",
   description:
     "A fictional creative industry event where motion, image, sound, code, and story collide across four charged days.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
