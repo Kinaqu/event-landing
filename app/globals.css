@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #050505;
+  --color-acid: #92ff37;
+  --color-orange: #ff6120;
+  --color-blue: #2d7bff;
+  --color-magenta: #ff2c83;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: white;
+  font-family: var(--font-body), sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(146, 255, 55, 0.35);
+  color: white;
+}
+
+.font-headline {
+  font-family: var(--font-headline), sans-serif;
+}
+
+.font-mono {
+  font-family: var(--font-mono), monospace;
+}
+
+.hero-shadow {
+  text-shadow:
+    0.03em 0 0 rgba(255, 97, 32, 0.88),
+    0.065em 0.035em 0 rgba(45, 123, 255, 0.65);
+}
+
+.vertical-label {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+}
+
+.poster-tile {
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 1.4rem;
+  background: rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(12px);
+  padding: 1.25rem;
+}
+
+.poster-grid {
+  position: relative;
+}
+
+.poster-grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 82px 82px;
+  mask-image: linear-gradient(180deg, white 35%, transparent 100%);
+  pointer-events: none;
+}
+
+.poster-tall::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 1.2rem;
+}
+
+.ticket-ring {
+  animation: spin-slow 18s linear infinite;
+}
+
+.ticker-track {
+  animation: ticker 26s linear infinite;
+}
+
+.ticker-reverse {
+  animation-direction: reverse;
+}
+
+.noise-layer {
+  background-image:
+    radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.1) 0 1px, transparent 1px),
+    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px),
+    radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px),
+    radial-gradient(circle at 60% 80%, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px);
+  background-size: 240px 240px;
+  filter: contrast(180%);
+}
+
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .ticker-track {
+    animation-duration: 18s;
+  }
+
+  .vertical-label {
+    display: none;
+  }
+}
