@@ -1,17 +1,46 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "motion/react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react";
 
 import {
+  audienceGroups,
+  faqItems,
   galleryPanels,
   heroBands,
   highlights,
   lineup,
+  outcomes,
   programDays,
   quickStats,
   tickets,
-  tracks,
+  venueNotes,
 } from "@/components/motion-week/data";
+
+const PASS_EMAIL = "passes@motionweek.live";
+
+function buildPassLink(tier: string) {
+  const subject = encodeURIComponent(`${tier} request / Motion Week`);
+  const body = encodeURIComponent(
+    [
+      "Hi Motion Week team,",
+      "",
+      `I want to reserve a ${tier}.`,
+      "",
+      "Name:",
+      "Company / Studio:",
+      "How many passes:",
+      "",
+      "Send me the next steps.",
+    ].join("\n"),
+  );
+
+  return `mailto:${PASS_EMAIL}?subject=${subject}&body=${body}`;
+}
 
 function Reveal({
   children,
@@ -20,12 +49,14 @@ function Reveal({
   children: React.ReactNode;
   className?: string;
 }) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <motion.div
-      initial={{ opacity: 0.35, y: 48 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={reduceMotion ? undefined : { opacity: 0.3, y: 32 }}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.7, ease: [0.18, 1, 0.22, 1] }}
+      transition={{ duration: 0.65, ease: [0.18, 1, 0.22, 1] }}
       className={className}
     >
       {children}
@@ -43,44 +74,37 @@ function SectionIntro({
   copy: string;
 }) {
   return (
-    <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
+    <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
       <div>
-        <p className="font-mono text-[0.72rem] uppercase tracking-[0.34em] text-white/55">
+        <p className="font-mono text-[0.7rem] uppercase tracking-[0.32em] text-white/50">
           {label}
         </p>
-        <h2 className="mt-4 max-w-3xl font-headline text-[clamp(4rem,10vw,8rem)] uppercase leading-[0.82] text-white">
+        <h2 className="mt-4 max-w-4xl font-headline text-[clamp(3rem,7vw,5.8rem)] uppercase leading-[0.86] text-white">
           {title}
         </h2>
       </div>
-      <p className="max-w-2xl text-lg leading-relaxed text-white/72">{copy}</p>
+      <p className="max-w-2xl text-base leading-relaxed text-white/72 sm:text-lg">
+        {copy}
+      </p>
     </div>
   );
 }
 
-function TickerRow({
-  items,
-  reverse,
-  className = "",
-}: {
-  items: string[];
-  reverse?: boolean;
-  className?: string;
-}) {
+function TickerRow({ items }: { items: string[] }) {
   const loopItems = [...items, ...items];
 
   return (
     <div
-      className={`relative overflow-hidden border-y border-white/10 bg-white/[0.04] ${className}`}
+      aria-hidden="true"
+      className="relative z-10 overflow-hidden border-y border-white/10 bg-white/[0.03]"
     >
-      <div
-        className={`ticker-track flex min-w-max gap-3 py-3 ${reverse ? "ticker-reverse" : ""}`}
-      >
+      <div className="ticker-track flex min-w-max gap-4 py-3">
         {loopItems.map((item, index) => (
           <div
             key={`${item}-${index}`}
-            className="flex items-center gap-3 whitespace-nowrap px-2"
+            className="flex items-center gap-4 whitespace-nowrap px-2"
           >
-            <span className="font-headline text-3xl uppercase leading-none text-white">
+            <span className="font-headline text-[2rem] uppercase leading-none text-white sm:text-[2.25rem]">
               {item}
             </span>
             <span className="h-2 w-2 rounded-full bg-[var(--color-acid)]" />
@@ -93,40 +117,48 @@ function TickerRow({
 
 function SmallCapsule({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-white/14 bg-white/[0.06] px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.28em] text-white/72">
+    <span className="inline-flex items-center rounded-full border border-white/14 bg-white/[0.05] px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.28em] text-white/72">
       {children}
     </span>
   );
 }
 
 export function MotionWeekPage() {
+  const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll();
-  const heroY = useTransform(scrollYProgress, [0, 0.25], [0, -120]);
-  const posterY = useTransform(scrollYProgress, [0, 0.25], [0, 90]);
-  const haloScale = useTransform(scrollYProgress, [0, 0.18], [1, 1.22]);
-  const atmosphereY = useTransform(scrollYProgress, [0.3, 0.75], [40, -60]);
+  const heroY = useTransform(scrollYProgress, [0, 0.2], [0, -48]);
+  const posterY = useTransform(scrollYProgress, [0, 0.2], [0, 42]);
+  const haloScale = useTransform(scrollYProgress, [0, 0.18], [1, 1.15]);
+
+  const heroMotionStyle = reduceMotion ? undefined : { y: heroY };
+  const posterMotionStyle = reduceMotion ? undefined : { y: posterY };
+  const haloMotionStyle = reduceMotion ? undefined : { scale: haloScale };
 
   return (
     <main className="min-h-screen overflow-x-clip bg-[var(--color-bg)] text-white">
-      <div className="pointer-events-none fixed inset-0 opacity-70">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,250,133,0.18),transparent_28%),radial-gradient(circle_at_85%_18%,rgba(255,97,32,0.2),transparent_24%),radial-gradient(circle_at_55%_72%,rgba(0,135,255,0.2),transparent_30%),linear-gradient(180deg,#050505_0%,#090909_46%,#050505_100%)]" />
+      <div className="pointer-events-none fixed inset-0 opacity-80">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,250,133,0.16),transparent_28%),radial-gradient(circle_at_82%_14%,rgba(255,97,32,0.18),transparent_24%),radial-gradient(circle_at_58%_78%,rgba(0,135,255,0.16),transparent_30%),linear-gradient(180deg,#050505_0%,#0a0a0a_46%,#050505_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:120px_120px] [mask-image:linear-gradient(180deg,white,transparent_88%)]" />
-        <div className="noise-layer absolute inset-0 opacity-[0.18]" />
+        <div className="noise-layer absolute inset-0 opacity-[0.16]" />
       </div>
 
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-black/35 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-6 px-4 py-3 sm:px-6 lg:px-10">
-          <div className="flex items-center gap-4">
-            <span className="font-headline text-4xl uppercase leading-none text-white">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-5 px-4 py-3 sm:px-6 lg:px-10">
+          <div className="min-w-0">
+            <a
+              href="#top"
+              className="block font-headline text-[2.3rem] uppercase leading-none text-white sm:text-[2.7rem]"
+            >
               Motion Week
-            </span>
-            <span className="hidden font-mono text-[0.7rem] uppercase tracking-[0.28em] text-white/48 sm:inline">
+            </a>
+            <p className="hidden font-mono text-[0.68rem] uppercase tracking-[0.3em] text-white/48 sm:block">
               Oct 09-12 / Brooklyn Navy Yard
-            </span>
+            </p>
           </div>
-          <nav className="hidden items-center gap-6 font-mono text-[0.72rem] uppercase tracking-[0.28em] text-white/62 lg:flex">
-            <a href="#about" className="transition hover:text-white">
-              About
+
+          <nav className="hidden items-center gap-6 font-mono text-[0.72rem] uppercase tracking-[0.28em] text-white/58 lg:flex">
+            <a href="#why" className="transition hover:text-white">
+              Why Attend
             </a>
             <a href="#lineup" className="transition hover:text-white">
               Lineup
@@ -137,236 +169,324 @@ export function MotionWeekPage() {
             <a href="#tickets" className="transition hover:text-white">
               Tickets
             </a>
+            <a href="#faq" className="transition hover:text-white">
+              FAQ
+            </a>
           </nav>
+
           <a
-            href="#tickets"
-            className="inline-flex items-center justify-center rounded-full border border-[var(--color-acid)] bg-[var(--color-acid)] px-5 py-2.5 font-mono text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-black transition duration-300 hover:translate-y-[-2px] hover:bg-white"
+            href={buildPassLink("Studio Pass")}
+            className="inline-flex shrink-0 items-center justify-center rounded-full border border-[var(--color-acid)] bg-[var(--color-acid)] px-4 py-2.5 font-mono text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-black transition duration-300 hover:translate-y-[-2px] hover:bg-white sm:px-5"
           >
-            Get festival pass
+            Get Studio Pass
           </a>
         </div>
       </header>
 
-      <TickerRow items={heroBands} className="relative z-10" />
+      <TickerRow items={heroBands} />
 
-      <section className="relative z-10">
-        <div className="mx-auto grid max-w-[1500px] gap-8 px-4 pb-10 pt-8 sm:px-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:px-10 lg:pb-16 lg:pt-10">
-          <motion.div style={{ y: heroY }} className="relative min-w-0">
-            <div className="flex flex-wrap items-center gap-3">
-              <SmallCapsule>Creative industry event</SmallCapsule>
-              <SmallCapsule>4-day live program</SmallCapsule>
-              <SmallCapsule>Talks / workshops / screenings / performances</SmallCapsule>
+      <section id="top" className="relative z-10">
+        <div className="mx-auto grid max-w-[1500px] gap-10 px-4 pb-14 pt-8 sm:px-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:px-10 lg:pb-20 lg:pt-12">
+          <motion.div style={heroMotionStyle} className="relative min-w-0">
+            <div className="flex flex-wrap gap-3">
+              <SmallCapsule>Brooklyn / Oct 09-12</SmallCapsule>
+              <SmallCapsule>Talks / workshops / screenings</SmallCapsule>
+              <SmallCapsule>Review arena / live sets / installations</SmallCapsule>
             </div>
 
-            <div className="mt-8 flex items-start gap-4 md:gap-7">
-              <div className="hidden shrink-0 flex-col gap-3 pt-3 md:flex">
-                <span className="vertical-label text-white/34">Brooklyn</span>
-                <span className="vertical-label text-[var(--color-orange)]">
-                  Oct 09-12
-                </span>
-              </div>
-
-              <div className="relative">
-                <p className="font-mono text-[0.82rem] uppercase tracking-[0.38em] text-[var(--color-acid)]">
-                  Disciplines collide. Screens wake up.
-                </p>
-                <h1 className="mt-3 font-headline text-[clamp(6rem,19vw,16rem)] uppercase leading-[0.78] tracking-[-0.03em] text-white">
+            <div className="mt-8 max-w-5xl">
+              <p className="font-mono text-[0.8rem] uppercase tracking-[0.36em] text-[var(--color-acid)]">
+                Four charged days for motion, screen design, and creative technology.
+              </p>
+              <div className="relative mt-4">
+                <h1 className="max-w-5xl font-headline text-[clamp(4.8rem,15vw,12.5rem)] uppercase leading-[0.8] tracking-[-0.03em] text-white">
                   Motion
                   <span className="hero-shadow block text-[var(--color-orange)]/95">
                     Week
                   </span>
                 </h1>
-                <div className="pointer-events-none absolute -left-2 top-8 -z-10 h-40 w-40 rounded-full border border-[var(--color-blue)]/35 bg-[var(--color-blue)]/10 blur-2xl" />
                 <motion.div
-                  style={{ scale: haloScale }}
-                  className="pointer-events-none absolute -right-6 top-12 -z-10 h-52 w-52 rounded-full border border-[var(--color-acid)]/30 bg-[radial-gradient(circle,rgba(0,250,133,0.18),transparent_65%)]"
+                  style={haloMotionStyle}
+                  className="pointer-events-none absolute -right-6 top-14 -z-10 h-44 w-44 rounded-full border border-[var(--color-acid)]/28 bg-[radial-gradient(circle,rgba(0,250,133,0.16),transparent_65%)] blur-[1px] sm:h-56 sm:w-56"
                 />
               </div>
-            </div>
-
-            <div className="mt-8 grid gap-8 lg:grid-cols-[0.88fr_1.12fr]">
-              <p className="max-w-xl text-lg leading-relaxed text-white/78 sm:text-xl">
-                Four dense days of motion design, visual culture, creative code,
-                sound, film language, live demos, and experimental media. Built
-                like a festival. Programmed like a pressure system.
+              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/78 sm:text-[1.35rem]">
+                A festival-scale program for motion designers, art directors,
+                creative coders, filmmakers, and studio teams who want sharper
+                references, direct feedback, and real proximity to the people
+                shaping the work.
               </p>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {[
-                  "11 stages, rooms, labs, and installations",
-                  "68 speakers, studios, and contributors",
-                  "Review arena for fresh portfolios and studio talent",
-                  "Late-night screenings, performances, and signal rooms",
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="border-l border-white/14 pl-4 text-sm uppercase tracking-[0.16em] text-white/56"
-                  >
-                    {item}
-                  </div>
-                ))}
-              </div>
             </div>
 
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="mt-8 flex flex-wrap gap-4">
               <a
-                href="#tickets"
+                href={buildPassLink("Studio Pass")}
                 className="inline-flex items-center justify-center rounded-full border border-[var(--color-acid)] bg-[var(--color-acid)] px-7 py-3 font-mono text-[0.74rem] font-semibold uppercase tracking-[0.28em] text-black transition duration-300 hover:translate-y-[-2px] hover:bg-white"
               >
-                Register now
+                Reserve Studio Pass
               </a>
               <a
                 href="#program"
                 className="inline-flex items-center justify-center rounded-full border border-white/16 bg-white/[0.04] px-7 py-3 font-mono text-[0.74rem] uppercase tracking-[0.28em] text-white transition duration-300 hover:border-white/32 hover:bg-white/[0.08]"
               >
-                Explore program
+                Explore Program
               </a>
+            </div>
+
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {quickStats.map((stat) => (
+                <div
+                  key={stat.label}
+                  className="rounded-[1.35rem] border border-white/10 bg-white/[0.04] p-4"
+                >
+                  <p className="font-headline text-[3.25rem] uppercase leading-none text-white">
+                    {stat.value}
+                  </p>
+                  <p className="mt-2 font-mono text-[0.68rem] uppercase tracking-[0.28em] text-white/48">
+                    {stat.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-10 grid gap-3 sm:grid-cols-2">
+              {[
+                "For teams who want the big-picture context behind the next wave of motion work.",
+                "For emerging talent looking for review rooms, sharper feedback, and better visibility.",
+                "For studios hiring across motion, brand systems, 3D, realtime, and title design.",
+                "For people who want talks by day and screenings, performances, and installations at night.",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="border-l border-white/14 pl-4 text-sm leading-relaxed text-white/62"
+                >
+                  {item}
+                </div>
+              ))}
             </div>
           </motion.div>
 
-          <motion.div style={{ y: posterY }} className="relative min-h-[680px] min-w-0">
-            <div className="relative h-full rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-4 shadow-[0_40px_120px_rgba(0,0,0,0.45)] sm:p-6">
-              <div className="absolute inset-3 rounded-[1.6rem] border border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(255,97,32,0.18),transparent_28%),radial-gradient(circle_at_12%_74%,rgba(0,135,255,0.2),transparent_32%),rgba(0,0,0,0.58)]" />
-              <div className="absolute right-8 top-8 h-24 w-24 rounded-full border border-white/20 bg-black/40 backdrop-blur">
-                <div className="ticket-ring h-full w-full rounded-full border border-dashed border-[var(--color-acid)]/60" />
-              </div>
-              <div className="relative grid h-full gap-4 md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-                <div className="flex min-w-0 flex-col justify-between gap-4">
-                  <div className="rounded-[1.4rem] border border-white/10 bg-black/45 p-5 backdrop-blur-sm">
-                    <p className="font-mono text-[0.72rem] uppercase tracking-[0.3em] text-white/50">
-                      Transmission notes
+          <motion.aside
+            style={posterMotionStyle}
+            className="relative min-h-[720px] min-w-0"
+          >
+            <div className="relative h-full overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-4 shadow-[0_40px_120px_rgba(0,0,0,0.45)] sm:p-6">
+              <div className="absolute inset-3 rounded-[1.65rem] border border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(255,97,32,0.18),transparent_28%),radial-gradient(circle_at_14%_78%,rgba(0,135,255,0.18),transparent_34%),rgba(0,0,0,0.58)]" />
+              <div className="relative flex h-full flex-col gap-4">
+                <div className="grid gap-4 md:grid-cols-[0.92fr_1.08fr]">
+                  <div className="rounded-[1.45rem] border border-white/10 bg-black/45 p-5 backdrop-blur-sm">
+                    <p className="font-mono text-[0.72rem] uppercase tracking-[0.32em] text-white/46">
+                      Reserve early
                     </p>
-                    <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                    <p className="mt-4 max-w-xs font-headline text-[3.7rem] uppercase leading-[0.84] text-white">
+                      Passes start at $69.
+                    </p>
+                    <p className="mt-4 text-sm leading-relaxed text-white/66">
+                      Festival access, workshop upgrades, portfolio reviews, and
+                      late-night programming across one dense four-day run.
+                    </p>
+                  </div>
+
+                  <div className="rounded-[1.45rem] border border-white/10 bg-black/38 p-5 backdrop-blur-sm">
+                    <p className="font-mono text-[0.72rem] uppercase tracking-[0.32em] text-[var(--color-acid)]">
+                      Core signals
+                    </p>
+                    <div className="mt-5 grid grid-cols-2 gap-3">
                       {quickStats.map((stat) => (
-                        <div key={stat.label} className="border-t border-white/10 pt-3">
-                          <p className="font-headline text-6xl uppercase leading-none text-white">
+                        <div
+                          key={stat.label}
+                          className="rounded-[1rem] border border-white/10 bg-white/[0.04] p-3"
+                        >
+                          <p className="font-headline text-[2.5rem] uppercase leading-none text-white">
                             {stat.value}
                           </p>
-                          <p className="mt-1 font-mono text-[0.68rem] uppercase tracking-[0.28em] text-white/46">
+                          <p className="mt-2 font-mono text-[0.62rem] uppercase tracking-[0.24em] text-white/46">
                             {stat.label}
                           </p>
                         </div>
                       ))}
                     </div>
                   </div>
-
-                  <div className="grid gap-4 sm:grid-cols-[0.9fr_1.1fr]">
-                    <div className="poster-tile rotate-[-4deg]">
-                      <span className="font-mono text-[0.68rem] uppercase tracking-[0.3em] text-white/50">
-                        Main room
-                      </span>
-                      <p className="mt-3 font-headline text-6xl uppercase leading-none text-[var(--color-acid)]">
-                        Talks
-                      </p>
-                      <p className="mt-5 text-sm text-white/70">
-                        Keynotes, studio breakdowns, and creative collisions on
-                        giant screens.
-                      </p>
-                    </div>
-                    <div className="poster-tile rotate-[3deg] border-[var(--color-orange)]/45">
-                      <span className="font-mono text-[0.68rem] uppercase tracking-[0.3em] text-white/50">
-                        After dark
-                      </span>
-                      <p className="mt-3 font-headline text-6xl uppercase leading-none text-[var(--color-orange)]">
-                        Live
-                      </p>
-                      <p className="mt-5 text-sm text-white/70">
-                        Screenings, AV sets, and installations that keep the
-                        venue moving after hours.
-                      </p>
-                    </div>
-                  </div>
                 </div>
 
-                <div className="grid min-w-0 gap-4 pt-10">
-                  <div className="poster-grid rounded-[1.4rem] border border-white/12 bg-black/40 p-4 backdrop-blur-sm">
-                    <div className="grid grid-cols-2 gap-3">
-                      {["Signal", "Render", "Pulse", "Afterimage"].map((item) => (
-                        <div
-                          key={item}
-                          className="rounded-[1rem] border border-white/10 bg-white/[0.04] p-3"
-                        >
-                          <p className="font-headline text-[2.35rem] uppercase leading-[0.9] text-white">
-                            {item}
-                          </p>
-                          <p className="mt-2 font-mono text-[0.64rem] uppercase tracking-[0.24em] text-white/44">
-                            Program block
-                          </p>
-                        </div>
-                      ))}
+                <div className="grid flex-1 gap-4 lg:grid-cols-[0.92fr_1.08fr]">
+                  <div className="grid gap-4">
+                    <div className="poster-tile rotate-[-2deg]">
+                      <span className="font-mono text-[0.68rem] uppercase tracking-[0.3em] text-white/48">
+                        Who it is for
+                      </span>
+                      <p className="mt-3 font-headline text-[3.4rem] uppercase leading-[0.86] text-[var(--color-acid)]">
+                        Teams.
+                      </p>
+                      <p className="mt-4 text-sm leading-relaxed text-white/72">
+                        Motion designers, art directors, studio leads, creative
+                        developers, and image-makers who want a denser room than a
+                        typical conference.
+                      </p>
+                    </div>
+
+                    <div className="poster-tile rotate-[1deg] border-[var(--color-orange)]/40">
+                      <span className="font-mono text-[0.68rem] uppercase tracking-[0.3em] text-white/48">
+                        Best reason to go
+                      </span>
+                      <p className="mt-3 font-headline text-[3.2rem] uppercase leading-[0.86] text-[var(--color-orange)]">
+                        Feedback.
+                      </p>
+                      <p className="mt-4 text-sm leading-relaxed text-white/72">
+                        Review rooms, practical workshops, live breakdowns, and
+                        conversations that improve the work, not just your mood.
+                      </p>
                     </div>
                   </div>
 
-                  <div className="poster-tall relative overflow-hidden rounded-[1.4rem] border border-white/12 bg-black/45 p-5">
-                    <div className="absolute inset-y-0 right-0 w-1/2 bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.08),transparent)]" />
-                    <p className="font-mono text-[0.72rem] uppercase tracking-[0.3em] text-[var(--color-blue)]">
-                      Venue atmosphere
-                    </p>
-                    <p className="mt-3 max-w-sm font-headline text-[4rem] uppercase leading-[0.84] text-white">
-                      A live poster system for the whole city block.
-                    </p>
-                    <div className="mt-8 grid max-w-sm gap-2 text-sm uppercase tracking-[0.12em] text-white/58">
-                      <span>Projection rooms</span>
-                      <span>Open review floor</span>
-                      <span>Sound-led performances</span>
-                      <span>Experimental showcases</span>
+                  <div className="grid gap-4">
+                    <div className="rounded-[1.45rem] border border-white/12 bg-black/40 p-5">
+                      <p className="font-mono text-[0.72rem] uppercase tracking-[0.3em] text-[var(--color-blue)]">
+                        What the week includes
+                      </p>
+                      <div className="mt-4 grid gap-3">
+                        {[
+                          "Keynotes and big-room talks",
+                          "Hands-on workshops",
+                          "Portfolio review arena",
+                          "After-dark screenings and AV performances",
+                        ].map((item) => (
+                          <div
+                            key={item}
+                            className="rounded-[1rem] border border-white/10 bg-white/[0.04] px-4 py-3 text-sm uppercase tracking-[0.16em] text-white/72"
+                          >
+                            {item}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="poster-tall relative overflow-hidden rounded-[1.45rem] border border-white/12 bg-black/45 p-5">
+                      <div className="absolute inset-y-0 right-0 w-1/2 bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.08),transparent)]" />
+                      <p className="font-mono text-[0.72rem] uppercase tracking-[0.3em] text-[var(--color-orange)]">
+                        Venue atmosphere
+                      </p>
+                      <p className="mt-3 max-w-sm font-headline text-[3.9rem] uppercase leading-[0.84] text-white">
+                        A live poster system for a whole city block.
+                      </p>
+                      <div className="mt-8 grid max-w-sm gap-2 text-sm uppercase tracking-[0.12em] text-white/58">
+                        <span>Projection rooms</span>
+                        <span>Open review floor</span>
+                        <span>Sound-led performances</span>
+                        <span>Experimental showcases</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </motion.div>
+          </motion.aside>
         </div>
       </section>
 
-      <TickerRow items={["Live demos", "Installations", "Portfolio reviews", "Title sequences", "Brand systems", "AV performance"]} reverse />
-
-      <Reveal className="relative z-10" >
-        <section id="about" className="mx-auto max-w-[1500px] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
+      <section
+        id="why"
+        className="relative z-10 mx-auto max-w-[1500px] px-4 py-20 sm:px-6 lg:px-10 lg:py-28"
+      >
+        <Reveal>
           <SectionIntro
-            label="About the event"
-            title="Not a quiet conference. A moving cultural program."
-            copy="Motion Week brings together the people shaping how visuals move now: motion designers, art directors, 3D artists, brand teams, filmmakers, creative developers, and image-makers working across live, digital, and spatial media. The point is not to observe from a distance. It is to enter the current."
+            label="Why Attend"
+            title="Reasons to fly in, stay late, and leave with better work."
+            copy="Motion Week is not just about seeing good work. It is for people who want tighter references, direct feedback, stronger context, and better conversations than a casual industry meetup can offer."
           />
+        </Reveal>
 
-          <div className="mt-14 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 sm:p-8">
-              <p className="max-w-3xl font-headline text-[clamp(3rem,7vw,6rem)] uppercase leading-[0.84] text-white">
-                Motion Week is where title design, branding, code, sound, story,
-                and moving image stop acting like separate disciplines.
-              </p>
-            </div>
-            <div className="grid gap-6">
-              {[
-                "Built for people who think visually, direct rhythm, build scenes, and care about how culture feels on screen.",
-                "Programmed with contrast: dense technical workshops, broad visual talks, portfolio rooms, installations, late screenings, and spontaneous conversations.",
-                "Made to generate momentum, not just attendance. You leave with references, contacts, pressure, and the need to make better work.",
-              ].map((paragraph) => (
-                <div key={paragraph} className="border-l border-white/12 pl-5 text-base leading-relaxed text-white/72">
-                  {paragraph}
-                </div>
-              ))}
-            </div>
+        <div className="mt-12 grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+          <div className="grid gap-4 md:grid-cols-3">
+            {outcomes.map((item, index) => (
+              <Reveal key={item.title}>
+                <motion.article
+                  whileHover={reduceMotion ? undefined : { y: -8 }}
+                  transition={{ type: "spring", stiffness: 220, damping: 18 }}
+                  className={`relative overflow-hidden rounded-[1.8rem] border border-white/10 p-6 ${
+                    index === 1
+                      ? "bg-[radial-gradient(circle_at_top_right,rgba(255,97,32,0.18),transparent_42%),rgba(255,255,255,0.05)]"
+                      : "bg-[radial-gradient(circle_at_top_left,rgba(0,250,133,0.12),transparent_42%),rgba(255,255,255,0.04)]"
+                  }`}
+                >
+                  <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-white/46">
+                    {item.proof}
+                  </p>
+                  <h3 className="mt-4 max-w-xs font-headline text-[2.8rem] uppercase leading-[0.86] text-white">
+                    {item.title}
+                  </h3>
+                  <p className="mt-5 text-base leading-relaxed text-white/72">
+                    {item.description}
+                  </p>
+                </motion.article>
+              </Reveal>
+            ))}
           </div>
-        </section>
-      </Reveal>
 
-      <Reveal className="relative z-10">
-        <section className="mx-auto max-w-[1500px] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
+          <Reveal>
+            <aside className="rounded-[2rem] border border-white/10 bg-white/[0.05] p-6 sm:p-8">
+              <p className="font-mono text-[0.72rem] uppercase tracking-[0.3em] text-[var(--color-acid)]">
+                Built for
+              </p>
+              <h3 className="mt-4 max-w-xl font-headline text-[3.8rem] uppercase leading-[0.86] text-white">
+                The people making visual culture move.
+              </h3>
+              <div className="mt-8 grid gap-4">
+                {audienceGroups.map((group) => (
+                  <div
+                    key={group.title}
+                    className="rounded-[1.3rem] border border-white/10 bg-black/24 p-4"
+                  >
+                    <p className="font-headline text-[2rem] uppercase leading-[0.88] text-white">
+                      {group.title}
+                    </p>
+                    <p className="mt-3 text-sm leading-relaxed text-white/68">
+                      {group.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </aside>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="relative z-10 border-y border-white/8 bg-white/[0.025]">
+        <div className="mx-auto max-w-[1500px] px-4 py-5 sm:px-6 lg:px-10">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {[
+              "68 speakers, studios, and contributors",
+              "11 stages, rooms, labs, and installations",
+              "Four days of day-to-night programming",
+              "Festival, Studio, and Night passes available",
+            ].map((proof) => (
+              <div
+                key={proof}
+                className="font-mono text-[0.72rem] uppercase tracking-[0.28em] text-white/58"
+              >
+                {proof}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 mx-auto max-w-[1500px] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
+        <Reveal>
           <SectionIntro
-            label="What to expect"
-            title="A packed program with contrast and tempo."
-            copy="The structure shifts on purpose. Big-room keynotes give way to lab intensity, review-floor urgency, screenings, installations, and night programming. The page mirrors that rhythm instead of flattening it."
+            label="Program Formats"
+            title="One event, several distinct reasons to stay all day."
+            copy="The mix matters. Big-room talks create context, workshops make the ideas practical, review sessions create pressure, and the night program keeps the whole thing from collapsing into conference routine."
           />
+        </Reveal>
 
-          <div className="mt-12 grid auto-rows-[minmax(220px,1fr)] gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {highlights.map((item, index) => (
+        <div className="mt-12 grid gap-4 md:grid-cols-2">
+          {highlights.map((item, index) => (
+            <Reveal key={item.title}>
               <motion.article
-                key={item.title}
-                whileHover={{ y: -10, rotate: index % 2 === 0 ? -1.2 : 1.2 }}
+                whileHover={reduceMotion ? undefined : { y: -8, rotate: index % 2 === 0 ? -0.8 : 0.8 }}
                 transition={{ type: "spring", stiffness: 220, damping: 18 }}
-                className={`group relative overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/[0.05] p-6 ${
-                  index === 1 || index === 4 ? "xl:col-span-2" : ""
-                }`}
+                className="group relative overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/[0.05] p-6 sm:p-7"
               >
                 <div
                   className={`absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100 ${
@@ -379,31 +499,34 @@ export function MotionWeekPage() {
                           : "bg-[radial-gradient(circle_at_top_right,rgba(255,28,131,0.18),transparent_45%)]"
                   }`}
                 />
-                <div className="relative flex h-full flex-col justify-between">
+                <div className="relative flex h-full flex-col justify-between gap-8">
                   <div>
                     <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-white/46">
                       {item.meta}
                     </p>
-                    <h3 className="mt-4 max-w-md font-headline text-[3.25rem] uppercase leading-[0.84] text-white">
+                    <h3 className="mt-4 max-w-md font-headline text-[3rem] uppercase leading-[0.86] text-white">
                       {item.title}
                     </h3>
                   </div>
-                  <p className="max-w-md text-base leading-relaxed text-white/74">
+                  <p className="max-w-md text-base leading-relaxed text-white/72">
                     {item.description}
                   </p>
                 </div>
               </motion.article>
-            ))}
-          </div>
-        </section>
-      </Reveal>
+            </Reveal>
+          ))}
+        </div>
+      </section>
 
-      <section id="lineup" className="relative z-10 mx-auto max-w-[1500px] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
+      <section
+        id="lineup"
+        className="relative z-10 mx-auto max-w-[1500px] px-4 py-20 sm:px-6 lg:px-10 lg:py-28"
+      >
         <Reveal>
           <SectionIntro
             label="Lineup"
-            title="A cast list built to pull you in."
-            copy="A mix of title designers, brand directors, motion studios, filmmakers, sound artists, 3D image-makers, and creative technologists. The lineup is treated like a wall of campaign posters instead of a row of polite headshots."
+            title="Studios, directors, and technologists worth crossing the city for."
+            copy="The lineup mixes title designers, brand directors, filmmakers, sound artists, creative developers, and image-makers whose work already shapes how screens feel in public."
           />
         </Reveal>
 
@@ -411,15 +534,12 @@ export function MotionWeekPage() {
           {lineup.map((person, index) => (
             <Reveal key={person.name}>
               <motion.article
-                whileHover={{
-                  y: -12,
-                  rotate: index % 2 === 0 ? -1 : 1,
-                }}
-                transition={{ type: "spring", stiffness: 260, damping: 18 }}
+                whileHover={reduceMotion ? undefined : { y: -10, rotate: index % 2 === 0 ? -0.8 : 0.8 }}
+                transition={{ type: "spring", stiffness: 240, damping: 18 }}
                 className="group relative overflow-hidden rounded-[1.7rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] p-5"
               >
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_40%)] opacity-60 transition duration-500 group-hover:scale-110" />
-                <div className="relative flex min-h-[300px] flex-col justify-between">
+                <div className="relative flex min-h-[280px] flex-col justify-between">
                   <div className="flex items-start justify-between gap-4">
                     <span className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-white/42">
                       {String(index + 1).padStart(2, "0")}
@@ -429,10 +549,10 @@ export function MotionWeekPage() {
                     </span>
                   </div>
                   <div>
-                    <p className="font-headline text-[3.2rem] uppercase leading-[0.82] text-white">
+                    <p className="font-headline text-[3rem] uppercase leading-[0.84] text-white">
                       {person.name}
                     </p>
-                    <p className="mt-3 max-w-xs text-sm uppercase tracking-[0.18em] text-white/54">
+                    <p className="mt-3 max-w-xs text-sm uppercase tracking-[0.16em] text-white/54">
                       {person.role}
                     </p>
                   </div>
@@ -449,265 +569,263 @@ export function MotionWeekPage() {
         </div>
       </section>
 
-      <TickerRow items={["Signal", "Render", "Pulse", "Afterimage", "Open floor", "Main room", "Cinema", "Dock stage"]} className="relative z-10" />
-
-      <section id="program" className="relative z-10 mx-auto max-w-[1500px] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
+      <section
+        id="program"
+        className="relative z-10 mx-auto max-w-[1500px] px-4 py-20 sm:px-6 lg:px-10 lg:py-28"
+      >
         <Reveal>
           <SectionIntro
-            label="Program"
-            title="A four-day pressure system."
-            copy="The schedule is intentionally dense. Talks feed reviews, workshops lead into screenings, and the whole thing keeps mutating after sunset. It should feel impressive at a glance and usable once you lean in."
+            label="Schedule Snapshot"
+            title="A four-day program that keeps changing shape."
+            copy="Each day has a different center of gravity, but the rhythm stays useful: talks feed workshops, reviews lead into screenings, and the venue stays active after sunset."
           />
         </Reveal>
 
-        <div className="mt-12 grid gap-5 xl:grid-cols-4">
-          {programDays.map((day) => (
-            <Reveal key={day.day}>
-              <article className="relative overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/[0.04] p-5">
-                <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,var(--color-acid),var(--color-orange),var(--color-blue))]" />
-                <div className="flex items-end justify-between gap-4">
-                  <div>
-                    <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-white/46">
-                      {day.day} / {day.date}
-                    </p>
-                    <h3 className="mt-3 font-headline text-[4rem] uppercase leading-[0.84] text-white">
-                      {day.title}
-                    </h3>
-                  </div>
-                  <span className="rounded-full border border-white/12 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.24em] text-white/50">
-                    05 blocks
-                  </span>
-                </div>
-                <div className="mt-6 grid gap-3">
-                  {day.sessions.map((session) => (
-                    <div
-                      key={session.time + session.name}
-                      className="rounded-[1rem] border border-white/10 bg-black/28 p-4"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="font-mono text-[0.68rem] uppercase tracking-[0.24em] text-[var(--color-acid)]">
-                          {session.time}
-                        </span>
-                        <span className="font-mono text-[0.62rem] uppercase tracking-[0.24em] text-white/42">
-                          {session.tag}
-                        </span>
-                      </div>
-                      <p className="mt-3 max-w-xs font-headline text-[2rem] uppercase leading-[0.86] text-white">
-                        {session.name}
+        <div className="mt-12 grid gap-5 xl:grid-cols-[1.12fr_0.88fr]">
+          <div className="grid gap-5 xl:grid-cols-2">
+            {programDays.map((day) => (
+              <Reveal key={day.day}>
+                <article className="relative overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/[0.04] p-5">
+                  <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,var(--color-acid),var(--color-orange),var(--color-blue))]" />
+                  <div className="flex items-end justify-between gap-4">
+                    <div>
+                      <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-white/46">
+                        {day.day} / {day.date}
                       </p>
+                      <h3 className="mt-3 font-headline text-[3.4rem] uppercase leading-[0.84] text-white">
+                        {day.title}
+                      </h3>
                     </div>
-                  ))}
-                </div>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+                    <span className="rounded-full border border-white/12 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.24em] text-white/50">
+                      05 blocks
+                    </span>
+                  </div>
 
-      <section className="relative z-10 mx-auto max-w-[1500px] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
-        <Reveal>
-          <SectionIntro
-            label="Tracks"
-            title="Six themes. One moving identity."
-            copy="Tracks are framed like big editorial slabs rather than neat product features. Each one names a pressure point in contemporary creative work."
-          />
-        </Reveal>
+                  <div className="mt-6 grid gap-3">
+                    {day.sessions.map((session) => (
+                      <div
+                        key={session.time + session.name}
+                        className="rounded-[1rem] border border-white/10 bg-black/28 p-4"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="font-mono text-[0.68rem] uppercase tracking-[0.24em] text-[var(--color-acid)]">
+                            {session.time}
+                          </span>
+                          <span className="font-mono text-[0.62rem] uppercase tracking-[0.24em] text-white/42">
+                            {session.tag}
+                          </span>
+                        </div>
+                        <p className="mt-3 max-w-xs font-headline text-[1.9rem] uppercase leading-[0.88] text-white">
+                          {session.name}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              </Reveal>
+            ))}
+          </div>
 
-        <div className="mt-12 grid gap-4 lg:grid-cols-2">
-          {tracks.map((track, index) => (
-            <Reveal key={track.title}>
-              <motion.article
-                whileHover={{ y: -8, x: index % 2 === 0 ? 8 : -8 }}
-                transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                className="group relative overflow-hidden rounded-[1.8rem] border border-white/10 bg-black/28 p-6 sm:p-8"
-              >
-                <div className="absolute inset-0 bg-[linear-gradient(130deg,rgba(255,255,255,0.07),transparent_45%)] opacity-0 transition duration-500 group-hover:opacity-100" />
-                <div className="relative flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-                  <span className="font-headline text-7xl uppercase leading-none text-white/18">
-                    {track.index}
-                  </span>
-                  <div className="max-w-xl">
-                    <h3 className="font-headline text-[3rem] uppercase leading-[0.86] text-white">
-                      {track.title}
-                    </h3>
-                    <p className="mt-4 text-base leading-relaxed text-white/72">
-                      {track.description}
+          <Reveal>
+            <aside className="flex h-full flex-col gap-4 rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] p-6 sm:p-8">
+              <div>
+                <p className="font-mono text-[0.72rem] uppercase tracking-[0.3em] text-[var(--color-orange)]">
+                  Venue + practical notes
+                </p>
+                <h3 className="mt-4 font-headline text-[3.8rem] uppercase leading-[0.84] text-white">
+                  Big visual energy, but easy to parse.
+                </h3>
+                <p className="mt-5 text-base leading-relaxed text-white/72">
+                  The venue is designed to keep the atmosphere intense without
+                  making the day hard to navigate. You can come for one part of the
+                  program or stay until the room turns into screenings and live AV.
+                </p>
+              </div>
+
+              <div className="grid gap-3">
+                {venueNotes.map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-[1.2rem] border border-white/10 bg-black/25 p-4"
+                  >
+                    <p className="font-mono text-[0.65rem] uppercase tracking-[0.28em] text-white/44">
+                      {item.label}
+                    </p>
+                    <p className="mt-2 text-base leading-relaxed text-white/76">
+                      {item.value}
                     </p>
                   </div>
-                </div>
-              </motion.article>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      <section className="relative z-10 overflow-hidden py-20 lg:py-28">
-        <motion.div style={{ y: atmosphereY }}>
-          <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-10">
-            <Reveal>
-              <SectionIntro
-                label="Atmosphere"
-                title="A preview of the world you’re entering."
-                copy="Because the event is fictional, the atmosphere is conveyed through composition, texture, and pacing instead of stock photos. The promise is still sensory: projection, noise, movement, giant type, screen light, crowded rooms, and a city block full of visual energy."
-              />
-            </Reveal>
-
-            <div className="mt-12 grid gap-4 lg:grid-cols-[1.08fr_0.92fr]">
-              <div className="grid min-h-[620px] gap-4 sm:grid-cols-2">
-                {galleryPanels.slice(0, 4).map((panel, index) => (
-                  <Reveal key={panel.title}>
-                    <motion.article
-                      whileHover={{ scale: 1.02, rotate: index % 2 === 0 ? -1 : 1 }}
-                      transition={{ type: "spring", stiffness: 210, damping: 18 }}
-                      className={`relative overflow-hidden rounded-[1.8rem] border border-white/10 p-6 ${
-                        index === 0
-                          ? "bg-[radial-gradient(circle_at_top_left,rgba(0,250,133,0.24),transparent_45%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]"
-                          : index === 1
-                            ? "bg-[radial-gradient(circle_at_bottom_right,rgba(255,97,32,0.26),transparent_45%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]"
-                            : index === 2
-                              ? "bg-[radial-gradient(circle_at_top_right,rgba(0,135,255,0.26),transparent_45%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]"
-                              : "bg-[radial-gradient(circle_at_bottom_left,rgba(255,28,131,0.24),transparent_45%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]"
-                      }`}
-                    >
-                      <div className="absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.08),transparent_55%)]" />
-                      <div className="relative flex h-full flex-col justify-between">
-                        <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-white/46">
-                          Atmosphere panel
-                        </p>
-                        <div>
-                          <h3 className="font-headline text-[3.4rem] uppercase leading-[0.84] text-white">
-                            {panel.title}
-                          </h3>
-                          <p className="mt-4 max-w-xs text-base leading-relaxed text-white/72">
-                            {panel.text}
-                          </p>
-                        </div>
-                      </div>
-                    </motion.article>
-                  </Reveal>
                 ))}
               </div>
 
-              <Reveal>
-                <aside className="flex min-h-[620px] flex-col justify-between rounded-[2rem] border border-white/10 bg-white/[0.05] p-6 sm:p-8">
-                  <div>
-                    <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-[var(--color-orange)]">
-                      Preview note
+              <div className="grid gap-3 sm:grid-cols-2">
+                {galleryPanels.map((panel) => (
+                  <div
+                    key={panel.title}
+                    className="rounded-[1.2rem] border border-white/10 bg-white/[0.04] p-4"
+                  >
+                    <p className="font-headline text-[1.9rem] uppercase leading-[0.9] text-white">
+                      {panel.title}
                     </p>
-                    <h3 className="mt-4 font-headline text-[clamp(3.4rem,6vw,6rem)] uppercase leading-[0.82] text-white">
-                      Controlled intensity, not chaos.
-                    </h3>
-                    <p className="mt-6 max-w-lg text-lg leading-relaxed text-white/72">
-                      The visual world is dense on purpose: bold type, compressed
-                      schedule energy, moving bands, layered gradients, and a
-                      sharper color system. It still keeps hierarchy intact so the
-                      visitor can feel the momentum without losing the plot.
+                    <p className="mt-3 text-sm leading-relaxed text-white/66">
+                      {panel.text}
                     </p>
                   </div>
-                  <div className="rounded-[1.6rem] border border-white/10 bg-black/30 p-5">
-                    <p className="font-headline text-[2.6rem] uppercase leading-[0.84] text-white">
-                      {galleryPanels[4].title}
-                    </p>
-                    <p className="mt-3 text-base leading-relaxed text-white/68">
-                      {galleryPanels[4].text}
-                    </p>
-                  </div>
-                </aside>
-              </Reveal>
-            </div>
-          </div>
-        </motion.div>
+                ))}
+              </div>
+            </aside>
+          </Reveal>
+        </div>
       </section>
 
-      <section id="tickets" className="relative z-10 mx-auto max-w-[1500px] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
+      <section
+        id="tickets"
+        className="relative z-10 mx-auto max-w-[1500px] px-4 py-20 sm:px-6 lg:px-10 lg:py-28"
+      >
         <Reveal>
           <SectionIntro
             label="Tickets"
-            title="Choose your entry point and move fast."
-            copy="The conversion section stays in the event language. These are tickets, not SaaS pricing cards. The goal is urgency, clarity, and enough contrast for the primary CTA to punch through."
+            title="Choose your pass and reserve a spot."
+            copy="The conversion moment needs to be obvious. Pick the access level that matches how deep you want to go, then send the reservation request directly from the page."
           />
         </Reveal>
 
-        <div className="mt-12 grid gap-4 xl:grid-cols-[1.1fr_0.9fr_1fr]">
+        <div className="mt-12 grid gap-4 xl:grid-cols-3">
           {tickets.map((ticket, index) => (
             <Reveal key={ticket.tier}>
               <motion.article
-                whileHover={{ y: -12, rotate: index === 1 ? -1.2 : 1.2 }}
+                whileHover={reduceMotion ? undefined : { y: -10, rotate: index === 1 ? -0.8 : 0.8 }}
                 transition={{ type: "spring", stiffness: 220, damping: 18 }}
                 className={`relative overflow-hidden rounded-[2rem] border p-6 sm:p-8 ${
                   index === 1
-                    ? "border-[var(--color-acid)]/50 bg-[radial-gradient(circle_at_top_right,rgba(0,250,133,0.18),transparent_40%),rgba(255,255,255,0.06)]"
+                    ? "border-[var(--color-acid)]/45 bg-[radial-gradient(circle_at_top_right,rgba(0,250,133,0.16),transparent_40%),rgba(255,255,255,0.06)]"
                     : index === 0
-                      ? "border-white/12 bg-[radial-gradient(circle_at_bottom_left,rgba(255,97,32,0.18),transparent_40%),rgba(255,255,255,0.04)]"
-                      : "border-white/12 bg-[radial-gradient(circle_at_top_left,rgba(0,135,255,0.18),transparent_40%),rgba(255,255,255,0.04)]"
+                      ? "border-white/12 bg-[radial-gradient(circle_at_bottom_left,rgba(255,97,32,0.16),transparent_40%),rgba(255,255,255,0.04)]"
+                      : "border-white/12 bg-[radial-gradient(circle_at_top_left,rgba(0,135,255,0.16),transparent_40%),rgba(255,255,255,0.04)]"
                 }`}
               >
-                <div className="absolute inset-x-0 top-0 h-3 bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.4)_0_16px,transparent_16px_30px)] opacity-30" />
+                <div className="absolute inset-x-0 top-0 h-3 bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.36)_0_16px,transparent_16px_30px)] opacity-30" />
                 <div className="relative flex h-full flex-col">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-white/50">
                         {ticket.note}
                       </p>
-                      <h3 className="mt-4 font-headline text-[3.3rem] uppercase leading-[0.84] text-white">
+                      <h3 className="mt-4 font-headline text-[3.1rem] uppercase leading-[0.84] text-white">
                         {ticket.tier}
                       </h3>
                     </div>
-                    <span className="font-headline text-[4.8rem] uppercase leading-none text-white">
+                    <span className="font-headline text-[4.6rem] uppercase leading-none text-white">
                       {ticket.price}
                     </span>
                   </div>
-                  <p className="mt-8 flex-1 text-base leading-relaxed text-white/74">
+
+                  <p className="mt-6 text-base leading-relaxed text-white/74">
                     {ticket.description}
                   </p>
+
+                  <div className="mt-6 grid gap-3">
+                    {ticket.includes.map((item) => (
+                      <div
+                        key={item}
+                        className="rounded-[1rem] border border-white/10 bg-black/24 px-4 py-3 text-sm text-white/72"
+                      >
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+
                   <a
-                    href="#final-cta"
+                    href={buildPassLink(ticket.tier)}
                     className={`mt-8 inline-flex w-fit items-center justify-center rounded-full px-6 py-3 font-mono text-[0.72rem] font-semibold uppercase tracking-[0.28em] transition duration-300 hover:translate-y-[-2px] ${
                       index === 1
                         ? "bg-[var(--color-acid)] text-black hover:bg-white"
                         : "border border-white/16 bg-white/[0.06] text-white hover:border-white/30 hover:bg-white/[0.1]"
                     }`}
                   >
-                    Reserve pass
+                    Reserve {ticket.tier}
                   </a>
                 </div>
               </motion.article>
             </Reveal>
           ))}
         </div>
+
+        <Reveal>
+          <div className="mt-8 rounded-[1.6rem] border border-white/10 bg-black/24 p-5">
+            <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-white/48">
+              Reservation flow
+            </p>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/68">
+              Each reservation button opens a prefilled email with the chosen pass
+              so the team can reply with availability, workshop booking details,
+              and next steps. Studio Pass holders receive workshop and review
+              booking instructions after confirming access.
+            </p>
+          </div>
+        </Reveal>
       </section>
 
-      <section id="final-cta" className="relative z-10 pb-24 pt-8 lg:pb-28">
+      <section
+        id="faq"
+        className="relative z-10 mx-auto max-w-[1500px] px-4 py-20 sm:px-6 lg:px-10 lg:py-28"
+      >
+        <Reveal>
+          <SectionIntro
+            label="FAQ"
+            title="Enough practical detail to remove hesitation."
+            copy="These are the practical questions most likely to slow down a reservation decision, answered before you need to email the team."
+          />
+        </Reveal>
+
+        <div className="mt-12 grid gap-4 md:grid-cols-2">
+          {faqItems.map((item) => (
+            <Reveal key={item.question}>
+              <article className="rounded-[1.6rem] border border-white/10 bg-white/[0.04] p-6">
+                <h3 className="max-w-xl font-headline text-[2.35rem] uppercase leading-[0.9] text-white">
+                  {item.question}
+                </h3>
+                <p className="mt-4 text-base leading-relaxed text-white/72">
+                  {item.answer}
+                </p>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="relative z-10 pb-10 pt-6">
         <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-10">
           <Reveal>
             <div className="overflow-hidden rounded-[2.3rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-6 sm:p-8 lg:p-10">
-              <div className="grid gap-10 lg:grid-cols-[1.12fr_0.88fr] lg:items-end">
+              <div className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
                 <div>
                   <p className="font-mono text-[0.72rem] uppercase tracking-[0.32em] text-[var(--color-acid)]">
                     Final call
                   </p>
-                  <h2 className="mt-4 font-headline text-[clamp(4.4rem,11vw,10rem)] uppercase leading-[0.78] text-white">
-                    Be in the room when the whole thing lights up.
+                  <h2 className="mt-4 max-w-4xl font-headline text-[clamp(3.8rem,9vw,8.5rem)] uppercase leading-[0.8] text-white">
+                    Be in the room before the work moves on without you.
                   </h2>
                 </div>
                 <div>
                   <p className="max-w-xl text-lg leading-relaxed text-white/74">
-                    Motion Week is for the people building the next wave of moving
-                    image, design systems, digital atmospheres, and visual story.
-                    If that is your world, you should not hear about it later.
+                    Motion Week is for people building the next wave of moving
+                    image, visual systems, digital atmosphere, and screen-led
+                    storytelling. Reserve the pass that fits and the team will
+                    send the next step directly.
                   </p>
                   <div className="mt-8 flex flex-wrap gap-4">
                     <a
-                      href="#tickets"
+                      href={buildPassLink("Studio Pass")}
                       className="inline-flex items-center justify-center rounded-full border border-[var(--color-acid)] bg-[var(--color-acid)] px-7 py-3 font-mono text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-black transition duration-300 hover:translate-y-[-2px] hover:bg-white"
                     >
-                      Lock in your pass
+                      Reserve Studio Pass
                     </a>
                     <a
-                      href="#lineup"
+                      href="#tickets"
                       className="inline-flex items-center justify-center rounded-full border border-white/16 bg-white/[0.04] px-7 py-3 font-mono text-[0.72rem] uppercase tracking-[0.28em] text-white transition duration-300 hover:border-white/30 hover:bg-white/[0.08]"
                     >
-                      View lineup
+                      Compare Passes
                     </a>
                   </div>
                 </div>
@@ -716,6 +834,33 @@ export function MotionWeekPage() {
           </Reveal>
         </div>
       </section>
+
+      <footer className="relative z-10 border-t border-white/10 pb-10 pt-8">
+        <div className="mx-auto grid max-w-[1500px] gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_auto] lg:px-10">
+          <div>
+            <p className="font-headline text-[2.7rem] uppercase leading-none text-white">
+              Motion Week
+            </p>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/64">
+              Brooklyn Navy Yard. October 09-12. Talks, workshops, screenings,
+              reviews, installations, and night programming for motion, image,
+              sound, and creative technology.
+            </p>
+          </div>
+
+          <div className="grid gap-2 font-mono text-[0.68rem] uppercase tracking-[0.28em] text-white/48 sm:text-right">
+            <a href={`mailto:${PASS_EMAIL}`} className="transition hover:text-white">
+              {PASS_EMAIL}
+            </a>
+            <a href="#program" className="transition hover:text-white">
+              View schedule
+            </a>
+            <a href="#faq" className="transition hover:text-white">
+              Read FAQ
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }

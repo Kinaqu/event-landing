@@ -97,11 +97,7 @@ a {
 }
 
 .ticker-track {
-  animation: ticker 26s linear infinite;
-}
-
-.ticker-reverse {
-  animation-direction: reverse;
+  animation: ticker 30s linear infinite;
 }
 
 .noise-layer {
@@ -136,10 +132,21 @@ a {
 
 @media (max-width: 768px) {
   .ticker-track {
-    animation-duration: 18s;
+    animation-duration: 20s;
   }
 
   .vertical-label {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .ticker-track,
+  .ticket-ring {
+    animation: none;
   }
 }

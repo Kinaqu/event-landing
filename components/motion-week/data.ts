@@ -1,63 +1,89 @@
 export const heroBands = [
-  "Motion Designers",
-  "Brand Worlds",
-  "Live Visuals",
+  "Motion Design",
+  "Brand Systems",
   "Creative Code",
-  "Film Titles",
-  "Sound Systems",
-  "Digital Art",
-  "Screen Culture",
+  "Title Sequences",
+  "3D Image-Making",
+  "Live Screenings",
+  "Portfolio Reviews",
+  "Sound-Led Visuals",
 ];
 
 export const quickStats = [
   { label: "Days", value: "04" },
-  { label: "Speakers + studios", value: "68" },
+  { label: "Speakers", value: "68" },
   { label: "Stages + labs", value: "11" },
-  { label: "Sessions", value: "42" },
+  { label: "Passes from", value: "$69" },
+];
+
+export const audienceGroups = [
+  {
+    title: "Motion designers",
+    description: "For people building identity systems, title work, campaigns, and moving brand language.",
+  },
+  {
+    title: "Creative technologists",
+    description: "For teams working in realtime tools, generative surfaces, browser-led visuals, and installations.",
+  },
+  {
+    title: "Filmmakers + art directors",
+    description: "For image-makers shaping narrative, sequence, pacing, sound, and visual storytelling.",
+  },
+  {
+    title: "Studios + hiring leads",
+    description: "For teams scouting talent, reviewing portfolios, and staying close to where the work is heading.",
+  },
+];
+
+export const outcomes = [
+  {
+    title: "Leave with sharper references",
+    description:
+      "See how studios, directors, and creative coders are building motion work right now, not six months later.",
+    proof: "Keynotes, screenings, live breakdowns",
+  },
+  {
+    title: "Get into rooms where feedback is direct",
+    description:
+      "Portfolio reviews, workshop critiques, and fast conversations make the event useful, not just inspiring.",
+    proof: "Review arena + hands-on labs",
+  },
+  {
+    title: "Meet the people behind the work",
+    description:
+      "The lineup mixes independent studios, brand teams, filmmakers, and technical image-makers across the same floor.",
+    proof: "68 speakers, studios, and contributors",
+  },
 ];
 
 export const highlights = [
   {
-    title: "Keynotes + collisions",
+    title: "Big-room talks",
     description:
-      "Big-room talks where motion language, brand systems, direction, and audience energy meet in public.",
+      "Morning keynotes on brand systems, title craft, visual culture, and where moving image is heading next.",
     accent: "lime",
-    meta: "Morning stage",
+    meta: "Main stage",
   },
   {
-    title: "Workshops under pressure",
+    title: "Hands-on workshops",
     description:
-      "Fast, practical sessions across Houdini, title design, realtime tools, worldbuilding, and moving identity.",
+      "Practical sessions across Houdini, realtime tools, title design, sound-image sync, and generative motion systems.",
     accent: "orange",
-    meta: "Hands-on labs",
+    meta: "Labs",
   },
   {
-    title: "Screenings after dark",
+    title: "Portfolio reviews",
     description:
-      "Title sequences, animated shorts, immersive loops, music visuals, and behind-the-scenes breakdowns.",
-    accent: "blue",
-    meta: "Cinema block",
-  },
-  {
-    title: "Portfolio review arena",
-    description:
-      "A review floor built for sharp feedback, studio discovery, and new work finding the right eyes.",
+      "Structured review blocks for emerging talent, hiring conversations, and sharper feedback than a casual meetup.",
     accent: "magenta",
-    meta: "Drop-in reviews",
+    meta: "Arena",
   },
   {
-    title: "Installations + signal rooms",
+    title: "After-dark screenings",
     description:
-      "Projection, sound, light, and responsive media pieces turning the venue into a moving identity system.",
-    accent: "orange",
-    meta: "Spatial program",
-  },
-  {
-    title: "Live demo broadcasts",
-    description:
-      "Projection-mapped software jams, studio process breakdowns, and real-time experiments on giant screens.",
-    accent: "lime",
-    meta: "Open feed",
+      "Title sequences, AV sets, short films, installations, and experimental media that keep the venue active at night.",
+    accent: "blue",
+    meta: "Night program",
   },
 ];
 
@@ -155,36 +181,22 @@ export const programDays = [
   },
 ];
 
-export const tracks = [
+export const venueNotes = [
   {
-    index: "01",
-    title: "Motion & Identity",
-    description: "How moving systems now shape the way brands feel, flex, and behave in public.",
+    label: "Venue",
+    value: "Brooklyn Navy Yard",
   },
   {
-    index: "02",
-    title: "Creative Code",
-    description: "Browser-native experiments, realtime tools, generative surfaces, and interactive image systems.",
+    label: "Format",
+    value: "Talks, workshops, screenings, reviews, live sets",
   },
   {
-    index: "03",
-    title: "Visual Storytelling",
-    description: "Sequences, pacing, title craft, editorial rhythm, and image-led narrative structure.",
+    label: "Best for",
+    value: "Individuals, studio teams, hiring leads, emerging talent",
   },
   {
-    index: "04",
-    title: "Sound & Space",
-    description: "Spatial audio, installations, reactive environments, and tempo as a design material.",
-  },
-  {
-    index: "05",
-    title: "Brand in Motion",
-    description: "Campaign systems, launch visuals, identity behavior, and the art of making brands move with intent.",
-  },
-  {
-    index: "06",
-    title: "Experimental Media",
-    description: "The edge of film, 3D, live visuals, digital sculpture, and cross-discipline image-making.",
+    label: "Access",
+    value: "Festival, Studio, and Night passes",
   },
 ];
 
@@ -194,6 +206,10 @@ export const galleryPanels = [
     text: "Walls become screens. Screens become stage directions.",
   },
   {
+    title: "Review floor",
+    text: "New portfolios, sharper feedback, fast conversations, new momentum.",
+  },
+  {
     title: "Lab tempo",
     text: "People gathering around process, tools, and unfinished ideas.",
   },
@@ -201,33 +217,73 @@ export const galleryPanels = [
     title: "Night signal",
     text: "Live image and sound work carrying the venue after hours.",
   },
-  {
-    title: "Review floor",
-    text: "New portfolios, sharp feedback, fast conversations, new momentum.",
-  },
-  {
-    title: "Poster system",
-    text: "A visual identity that keeps mutating as the program unfolds.",
-  },
 ];
 
 export const tickets = [
   {
     tier: "Festival Pass",
     price: "$149",
-    description: "All talks, screenings, installation access, and the closing night set.",
+    description: "Best for attendees who want the full conference floor, talks, screenings, and closing night energy.",
     note: "Best for first-time attendees",
+    includes: [
+      "All talks and main-stage keynotes",
+      "Screenings and installations",
+      "Closing set + evening access",
+    ],
   },
   {
     tier: "Studio Pass",
     price: "$249",
-    description: "Everything in Festival plus workshops, review arena access, and studio breakfast.",
-    note: "Built for teams and hiring leads",
+    description: "Built for teams and hiring leads who want workshop access, portfolio reviews, and stronger proximity to the work.",
+    note: "Most complete access",
+    includes: [
+      "Everything in Festival Pass",
+      "Workshop seats and review arena access",
+      "Studio breakfast + hiring exchange",
+    ],
   },
   {
     tier: "Night Signal",
     price: "$69",
-    description: "Evening screenings, performances, installations, and late-night networking.",
-    note: "For the after-hours crowd",
+    description: "For the after-hours crowd coming for screenings, performances, installations, and late networking.",
+    note: "Evening-only access",
+    includes: [
+      "Night screenings and AV performances",
+      "Installation floor access",
+      "Late-night networking",
+    ],
+  },
+];
+
+export const faqItems = [
+  {
+    question: "Who is Motion Week built for?",
+    answer:
+      "Motion designers, art directors, creative technologists, filmmakers, 3D artists, studio teams, and emerging talent looking for both inspiration and direct feedback.",
+  },
+  {
+    question: "What is included in each pass?",
+    answer:
+      "Festival Pass covers talks, screenings, and installations. Studio Pass adds workshops, review arena access, and the studio breakfast. Night Signal is for evening programming only.",
+  },
+  {
+    question: "Are workshops and portfolio reviews limited?",
+    answer:
+      "Yes. Workshop seats and review slots are capped to keep sessions useful. Studio Pass holders receive priority booking details after reserving.",
+  },
+  {
+    question: "Is the event good for teams?",
+    answer:
+      "Yes. The program is designed for both individuals and studio teams. Studio Pass is the best fit if you are attending with hiring, mentorship, or team development in mind.",
+  },
+  {
+    question: "Will there be night programming?",
+    answer:
+      "Yes. Each day extends into screenings, performances, and live visual work after the daytime sessions end.",
+  },
+  {
+    question: "How do I reserve a pass?",
+    answer:
+      "Use any Reserve button on the page. The request opens a prefilled email so the team can send pass details and next steps.",
   },
 ];
